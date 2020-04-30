@@ -109,15 +109,18 @@ module.exports = function (config) {
     tasks.push(handler())
 
     cb()
-  }, function () {
+  }, function (next) {
     Q.allSettled(tasks)
       .then(function (fulfilled) {
         log('Upload to qcloud: Total:', colors.green(fulfilled.length),
           'Skip:', colors.gray(existFiles),
           'Upload:', colors.green(uploadedFiles),
-          'Failed:', colors.red(uploadedFail))
+          'Failed:', colors.red(uploadedFail));
+
+        next();
       }, function (err) {
-        log('Failed upload files:', err)
+        log('Failed upload files:', err);
+        throw err;
       })
   })
 }
